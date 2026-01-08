@@ -1,9 +1,5 @@
 #include "Game.h"
 
-Game::Game(SDL_Renderer* renderer)
-    : m_renderSystem(renderer)
-{}
-
 // This function iterates through a frame of the game loop.
 SDL_AppResult Game::iterate()
 {
@@ -56,10 +52,11 @@ SDL_AppResult Game::init()
         return SDL_APP_FAILURE;
     }
 
-    // CREATE ONE TEST ENTITY
-    auto e = m_registry.create();
-    m_registry.emplace<Position>(e, 100.f, 100.f);
-    m_registry.emplace<RenderRect>(e, 200.f,100.f, SDL_Color{255, 255, 255, 255});
+    EntityFactory factory(m_registry);
+
+    factory.createBall();
+    factory.createPaddleLeft();
+    factory.createPaddleRight();
 
     return SDL_APP_CONTINUE; // Successful initialization
 }

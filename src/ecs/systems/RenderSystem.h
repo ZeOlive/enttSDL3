@@ -4,10 +4,10 @@
 
 class RenderSystem {
 public:
-    explicit RenderSystem(SDL_Renderer* renderer);
+    explicit RenderSystem(SDL_Renderer& renderer) : m_renderer(renderer) {};
 
     bool draw(entt::registry& registry);
 
 private:
-    SDL_Renderer* m_renderer;
+    SDL_Renderer& m_renderer;
 };

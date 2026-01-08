@@ -6,6 +6,7 @@
 #include <vector>
 #include "ecs/Components.h"
 #include "ecs/systems/RenderSystem.h"
+#include "ecs/EntityFactory.h"
 
 #define SDL_WINDOW_WIDTH 800
 #define SDL_WINDOW_HEIGHT 600
@@ -14,7 +15,7 @@
 
 class Game{
 public:
-    explicit Game(SDL_Renderer* renderer);
+    explicit Game(SDL_Renderer& renderer) : m_renderSystem(renderer) {};
 
 	SDL_AppResult init();
 	SDL_AppResult iterate();

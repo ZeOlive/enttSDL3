@@ -23,6 +23,7 @@ add_executable(mygame
     src/main.cpp
     src/Game.cpp
     src/ecs/systems/RenderSystem.cpp
+    src/ecs/EntityFactory.cpp
 )
 
 target_link_libraries(mygame

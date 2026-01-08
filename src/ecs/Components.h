@@ -24,3 +24,9 @@ struct RenderRect {
     float h{};
     SDL_Color color{};
 };
+
+//Tags
+struct TagPaddle {};
+struct TagBall {};
+struct TagPlayer {};
+struct TagAI {};

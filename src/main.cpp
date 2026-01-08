@@ -1,15 +1,15 @@
 #include "Game.h"
 #include <SDL3/SDL_main.h>
-#include <entt/entt.hpp>
 
 struct AppState {
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
     Game game;
 
-    AppState(SDL_Renderer* r)
-        : renderer(r)
-        , game(r)
+    AppState(SDL_Window* w, SDL_Renderer* r): 
+        window(w),
+        renderer(r),
+        game(*r)
     {}
 };
 
@@ -22,14 +22,15 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]){
         return SDL_APP_FAILURE;
     }
 
-    auto* state = new AppState(renderer);
+    auto* state = new AppState(window, renderer);
 
     if (state->game.init() != SDL_APP_CONTINUE) {
         delete state;
         return SDL_APP_FAILURE;
 	}
 
-    *appstate = state;
+     *appstate = state;
+
     return SDL_APP_CONTINUE;
 }
 

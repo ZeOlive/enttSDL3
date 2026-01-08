@@ -1,12 +1,15 @@
 #include "Game.h"
-#include <vector>
+
+Game::Game(SDL_Renderer* renderer)
+    : m_renderSystem(renderer)
+{}
 
 // This function iterates through a frame of the game loop.
 SDL_AppResult Game::iterate()
 {
     // Record the start time for the current frame.
     uint64_t frameStart = SDL_GetTicks();
-	int frameTime = 0;
+	uint64_t frameTime = 0;
 
     if (!handleEvents())
     // Handle events
@@ -16,7 +19,7 @@ SDL_AppResult Game::iterate()
 	if (!update())
 		return SDL_APP_FAILURE;
     // Render the updated game state
-    if (!render())
+    if (!m_renderSystem.draw(m_registry))
         return SDL_APP_FAILURE;
 
     // Calculate how long it took to handle, update and render the frame.
@@ -40,7 +43,6 @@ bool Game::handleEvents()
 }
 
 // This function initializes the game, sets up metadata, initializes SDL,
-// creates a window and renderer for rendering graphics.
 SDL_AppResult Game::init()
 {
     // Set application metadata
@@ -54,11 +56,10 @@ SDL_AppResult Game::init()
         return SDL_APP_FAILURE;
     }
 
-    // Create a window and renderer for displaying graphics
-    if (!SDL_CreateWindowAndRenderer("test/pong", SDL_WINDOW_WIDTH, SDL_WINDOW_HEIGHT, 0, &window, &renderer)) {
-        return SDL_APP_FAILURE;
-    }
-
+    // CREATE ONE TEST ENTITY
+    auto e = m_registry.create();
+    m_registry.emplace<Position>(e, 100.f, 100.f);
+    m_registry.emplace<RenderRect>(e, 200.f,100.f, SDL_Color{255, 255, 255, 255});
 
     return SDL_APP_CONTINUE; // Successful initialization
 }
@@ -67,37 +68,4 @@ SDL_AppResult Game::init()
 bool Game::update()
 {
     return true;
-
-}
-
-// This function renders the current game state to the screen.
-// It cycles through different colors for rendering each frame.
-bool Game::render()
-{
-    static int i = 0;
-
-
-
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, i, SDL_ALPHA_OPAQUE); // Set render color
-    i++; // Increment color value
-    if (i > 255) i = 0; // Reset to start of colors
-
-    // Clear the screen with the current render color
-    SDL_RenderClear(renderer);
-
-    // Present the rendered frame to the display
-    SDL_RenderPresent(renderer);
-    return true;
-}
-
-// This function cleans up and releases resources used by the game.
-void Game::clean()
-{
-
-
-    // Destroy the renderer
-    SDL_DestroyRenderer(renderer);
-    // Destroy the window
-    SDL_DestroyWindow(window);
 }

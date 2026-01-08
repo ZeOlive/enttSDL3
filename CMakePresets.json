@@ -1,11 +1,73 @@
 {
-  "version": 3,
-  "configurePresets": [{
-    "name": "default",
-    "binaryDir": "build"
-  }],
-  "buildPresets": [{
-    "name": "default",
-    "configurePreset": "w64"
-  }]
+  "version": 6,
+
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_POSITION_INDEPENDENT_CODE": "ON",
+        "SDL_SHARED": "ON",
+        "SDL_STATIC": "OFF",
+        "SDL_INSTALL": "OFF",
+        "SDL_TESTS": "OFF",
+        "MYGAME_VENDORED": "ON"
+      }
+    },
+
+    {
+      "name": "windows-debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/windows-debug",
+      "environment": {
+        "PATH": "C:/msys64/ucrt64/bin;$penv{PATH}"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "environment": {
+        "PATH": "C:/msys64/ucrt64/bin;$penv{PATH}"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+    {
+      "name": "linux-debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/linux-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/linux-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    { "name": "windows-debug",   "configurePreset": "windows-debug" },
+    { "name": "windows-release", "configurePreset": "windows-release" },
+    { "name": "linux-debug",          "configurePreset": "linux-debug" },
+    { "name": "linux-release",        "configurePreset": "linux-release" }
+  ]
 }

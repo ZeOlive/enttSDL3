@@ -2,6 +2,10 @@
 
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
+#include <entt/entt.hpp>
+#include <vector>
+#include "ecs/Components.h"
+#include "ecs/systems/RenderSystem.h"
 
 #define SDL_WINDOW_WIDTH 800
 #define SDL_WINDOW_HEIGHT 600
@@ -10,17 +14,14 @@
 
 class Game{
 public:
-	Game() = default;
-	~Game() { clean(); }
+    explicit Game(SDL_Renderer* renderer);
 
 	SDL_AppResult init();
 	SDL_AppResult iterate();
 	bool handleEvents();
 	bool update();
-	bool render();
-	void clean();
-
+	
 private:
-	SDL_Window* window = nullptr;
-	SDL_Renderer* renderer = nullptr;
+    entt::registry m_registry;
+    RenderSystem m_renderSystem;
 };

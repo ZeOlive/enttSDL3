@@ -1,54 +1,79 @@
 cmake_minimum_required(VERSION 3.23)
+project(mygame LANGUAGES C CXX)
 
-project(
-  MyGame
-  VERSION 1.0
-  DESCRIPTION "My first SDL3 Game"
-  LANGUAGES CXX
-)
-
+# ---------------------------------------------
+# Global configuration
+# ---------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(
-  CMAKE_RUNTIME_OUTPUT_DIRECTORY
-  "${CMAKE_BINARY_DIR}/$<CONFIGURATION>"
+# ---------------------------------------------
+# SDL and EnTT (vendored)
+# ---------------------------------------------
+# Build SDL3 from the vendored folder.
+# SDL_INSTALL, SDL_TESTS and other flags are controlled by CMakePresets.
+add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(vendored/entt EXCLUDE_FROM_ALL)
+
+# ---------------------------------------------
+# Executable
+# ---------------------------------------------
+add_executable(mygame
+    src/main.cpp
+    src/Game.cpp
+    src/ecs/systems/RenderSystem.cpp
 )
 
-set(
-  CMAKE_LIBRARY_OUTPUT_DIRECTORY
-  "${CMAKE_BINARY_DIR}/$<CONFIGURATION>"
+target_link_libraries(mygame
+    PRIVATE
+        SDL3::SDL3
+        EnTT::EnTT
 )
 
-add_executable(MyGame
-  src/main.cpp
+target_include_directories(mygame
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
 )
 
-if(APPLE)
-  set_target_properties(MyGame PROPERTIES
-    INSTALL_RPATH "@executable_path;@loader_path"
-    BUILD_WITH_INSTALL_RPATH TRUE
-    MACOSX_RPATH TRUE
-  )
-elseif(UNIX)
-  set_target_properties(MyGame PROPERTIES
-    INSTALL_RPATH "$ORIGIN"
-    BUILD_WITH_INSTALL_RPATH TRUE
-  )
+# ---------------------------------------------
+# Copy SDL3 shared library next to the executable (Windows only)
+# ---------------------------------------------
+if (WIN32 AND SDL_SHARED)
+    add_custom_command(
+        TARGET mygame POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE_DIR:mygame>
+    )
 endif()
 
-if(WIN32)
-  set(MATH_LIBRARY "" CACHE STRING "" FORCE)
+# ---------------------------------------------
+# Copy MSYS2 UCRT64 runtime DLLs automatically
+# (libstdc++-6.dll, libgcc_s_seh-1.dll, libwinpthread-1.dll)
+# ---------------------------------------------
+if(WIN32 AND "${CMAKE_CXX_COMPILER}" MATCHES "msys64/.*/ucrt64")
+
+    get_filename_component(MSYS_ROOT "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    set(MSYS_UCRT64_BIN "${MSYS_ROOT}")
+
+    set(RUNTIME_DLLS
+        "${MSYS_UCRT64_BIN}/libstdc++-6.dll"
+        "${MSYS_UCRT64_BIN}/libgcc_s_seh-1.dll"
+        "${MSYS_UCRT64_BIN}/libwinpthread-1.dll"
+    )
+
+    foreach(DLL ${RUNTIME_DLLS})
+        add_custom_command(TARGET mygame POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL}"
+            "$<TARGET_FILE_DIR:mygame>"
+        )
+    endforeach()
+
 endif()
 
-set(SDLTTF_VENDORED ON)
-set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
-add_subdirectory(${VENDOR_DIR}/SDL)
-add_subdirectory(${VENDOR_DIR}/SDL_image)
-add_subdirectory(${VENDOR_DIR}/SDL_ttf)
-
-target_link_libraries(MyGame
-  SDL3::SDL3
-  SDL3_image::SDL3_image
-  SDL3_ttf::SDL3_ttf
-)
+# ---------------------------------------------
+# Installation (optional for Linux)
+# ---------------------------------------------
+install(TARGETS mygame)

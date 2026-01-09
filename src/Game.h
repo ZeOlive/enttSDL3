@@ -6,6 +6,7 @@
 #include <vector>
 #include "ecs/Components.h"
 #include "ecs/systems/RenderSystem.h"
+#include "ecs/systems/MovementSystem.h"
 #include "ecs/EntityFactory.h"
 
 #define SDL_WINDOW_WIDTH 800
@@ -20,9 +21,11 @@ public:
 	SDL_AppResult init();
 	SDL_AppResult iterate();
 	bool handleEvents();
-	bool update();
+	bool update(float dt);
 	
 private:
     entt::registry m_registry;
     RenderSystem m_renderSystem;
+	MovementSystem m_movementSystem;
+	uint64_t m_frameLast = 0;
 };

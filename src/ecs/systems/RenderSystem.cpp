@@ -8,8 +8,10 @@ bool RenderSystem::draw(entt::registry& registry) {
     //SDL_Log("Renderable entities (hint): %zu", view.size_hint());
 
     // 1️⃣ Clear first (background color)
-    SDL_SetRenderDrawColor(&m_renderer, 0, 0, 0, 0);
-    SDL_RenderClear(&m_renderer);
+    if(!SDL_SetRenderDrawColor(&m_renderer, 0, 0, 0, 0))
+        return false;
+    if(!SDL_RenderClear(&m_renderer))
+        return false;
 
     // 2️⃣ Draw entities
     for (auto entity : view) {
@@ -23,19 +25,22 @@ bool RenderSystem::draw(entt::registry& registry) {
             rect.h
         };
 
-        SDL_SetRenderDrawColor(
+        if(!SDL_SetRenderDrawColor(
             &m_renderer,
             rect.color.r,
             rect.color.g,
             rect.color.b,
             rect.color.a
-        );
-
-        SDL_RenderFillRect(&m_renderer, &sdlRect);
+        ))
+            return false;
+            
+        if(!SDL_RenderFillRect(&m_renderer, &sdlRect))
+            return false;
     }
 
     // 3️⃣ Present once
-    SDL_RenderPresent(&m_renderer);
+    if(!SDL_RenderPresent(&m_renderer))
+        return false;
 
     return true;
 }

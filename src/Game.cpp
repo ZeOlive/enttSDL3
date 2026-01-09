@@ -6,13 +6,17 @@ SDL_AppResult Game::iterate()
     // Record the start time for the current frame.
     uint64_t frameStart = SDL_GetTicks();
 	uint64_t frameTime = 0;
+    // delta time
+    float dt = static_cast<float>(frameStart - m_frameLast) * 0.001f;
+    // limit dt to avoid big jumps
+    m_frameLast = frameStart;
+    dt = std::min(dt, 0.05f);
 
-    if (!handleEvents())
     // Handle events
     if (!handleEvents())
 		return SDL_APP_FAILURE;
     // Update game state
-	if (!update())
+	if (!update(dt))
 		return SDL_APP_FAILURE;
     // Render the updated game state
     if (!m_renderSystem.draw(m_registry))
@@ -58,11 +62,15 @@ SDL_AppResult Game::init()
     factory.createPaddleLeft();
     factory.createPaddleRight();
 
+    m_frameLast = SDL_GetTicks();
+
     return SDL_APP_CONTINUE; // Successful initialization
 }
 
 // This function updates the game state. Currently, it does nothing and always returns true.
-bool Game::update()
+bool Game::update(float dt)
 {
+    m_movementSystem.update(m_registry, dt);
+
     return true;
 }

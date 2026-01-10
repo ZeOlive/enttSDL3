@@ -1,8 +1,9 @@
 #include "Game.h"
+#include "ecs/Components.h"
+#include "ecs/EntityFactory.h"
 
 // This function iterates through a frame of the game loop.
-SDL_AppResult Game::iterate()
-{
+SDL_AppResult Game::iterate(){
     // Record the start time for the current frame.
     uint64_t frameStart = SDL_GetTicks();
 	uint64_t frameTime = 0;
@@ -12,9 +13,6 @@ SDL_AppResult Game::iterate()
     m_frameLast = frameStart;
     dt = std::min(dt, 0.05f);
 
-    // Handle events
-    if (!handleEvents())
-		return SDL_APP_FAILURE;
     // Update game state
 	if (!update(dt))
 		return SDL_APP_FAILURE;
@@ -35,16 +33,29 @@ SDL_AppResult Game::iterate()
     return SDL_APP_CONTINUE;
 }
 
-// This function handles events such as input and window state changes.
-// Currently, it always returns true indicating no issues with event handling.
-bool Game::handleEvents()
+SDL_AppResult Game::handleEvents(SDL_Event* event)
 {
-    return true;
+    switch (event->type) {
+        case SDL_EVENT_QUIT:
+            return SDL_APP_SUCCESS;
+        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_UP:
+            if (event->key.key == 'w') {
+                m_inputState.up = !(event->type-SDL_EVENT_KEY_DOWN);
+            }
+            else if (event->key.key == 's') {
+                m_inputState.down = !(event->type-SDL_EVENT_KEY_DOWN);
+            }
+            break;
+        default:
+            break;
+    }
+
+    return SDL_APP_CONTINUE;
 }
 
 // This function initializes the game, sets up metadata, initializes SDL,
-SDL_AppResult Game::init()
-{
+SDL_AppResult Game::init(){
     // Set application metadata
     if (!SDL_SetAppMetadata("Test Pong", "1.0", "com.example.Pong")) {
         return SDL_APP_FAILURE;
@@ -70,6 +81,7 @@ SDL_AppResult Game::init()
 // This function updates the game state. Currently, it does nothing and always returns true.
 bool Game::update(float dt)
 {
+    m_inputSystem.update(m_registry, m_inputState);
     m_movementSystem.update(m_registry, dt);
 
     return true;

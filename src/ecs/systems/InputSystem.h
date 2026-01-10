@@ -1,7 +1,8 @@
 #pragma once
 #include <entt/entt.hpp>
+#include "InputState.h"
 
 class InputSystem {
 public:
-    void update(entt::registry& registry, float dt);
+    bool update(entt::registry& registry, const InputState& inputState);
 };

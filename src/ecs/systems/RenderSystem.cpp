@@ -2,8 +2,8 @@
 #include "ecs/Components.h"
 
 bool RenderSystem::draw(entt::registry& registry) {
-   
-    auto view = registry.view<Position, RenderRect>();
+
+    auto view = registry.view<RenderRect, Color>();
 
     //SDL_Log("Renderable entities (hint): %zu", view.size_hint());
 
@@ -15,26 +15,19 @@ bool RenderSystem::draw(entt::registry& registry) {
 
     // 2️⃣ Draw entities
     for (auto entity : view) {
-        const auto& pos  = view.get<Position>(entity);
-        const auto& rect = view.get<RenderRect>(entity);
-
-        SDL_FRect sdlRect{
-            pos.x,
-            pos.y,
-            rect.w,
-            rect.h
-        };
+        const auto& rectComponent = view.get<RenderRect>(entity);
+        const auto& colorComponent = view.get<Color>(entity);
 
         if(!SDL_SetRenderDrawColor(
             &m_renderer,
-            rect.color.r,
-            rect.color.g,
-            rect.color.b,
-            rect.color.a
+            colorComponent.color.r,
+            colorComponent.color.g,
+            colorComponent.color.b,
+            colorComponent.color.a
         ))
             return false;
-            
-        if(!SDL_RenderFillRect(&m_renderer, &sdlRect))
+
+        if(!SDL_RenderFillRect(&m_renderer, &rectComponent.rect))
             return false;
     }
 

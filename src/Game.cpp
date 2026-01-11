@@ -83,6 +83,7 @@ bool Game::update(float dt)
 {
     m_inputSystem.update(m_registry, m_inputState);
     m_movementSystem.update(m_registry, dt);
+    m_collisionSystem.update(m_registry);
 
     return true;
 }

@@ -1,14 +1,17 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-struct Position {
-    float x{};
-    float y{};
+struct RenderRect {
+    SDL_FRect rect{};
 };
 
 struct Velocity {
     float x{};
     float y{};
+};
+
+struct Color {
+    SDL_Color color{};
 };
 
 struct Paddle {
@@ -19,13 +22,10 @@ struct Ball {
     float radius{};
 };
 
-struct RenderRect {
-    float w{};
-    float h{};
-    SDL_Color color{};
-};
-
 //Tags
 struct TagBall {};
+struct TagPaddle {};
+struct TagLeftPaddle {}; // Player 1
+struct TagRightPaddle {}; // Player 2
 struct TagPlayer {};
 struct TagAI {};

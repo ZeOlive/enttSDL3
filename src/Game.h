@@ -7,6 +7,7 @@
 #include "ecs/systems/RenderSystem.h"
 #include "ecs/systems/MovementSystem.h"
 #include "ecs/systems/InputSystem.h"
+#include "ecs/systems/CollisionSystem.h"
 
 #define SDL_WINDOW_WIDTH 800
 #define SDL_WINDOW_HEIGHT 600
@@ -27,6 +28,7 @@ private:
 	InputState m_inputState;
     RenderSystem m_renderSystem;
 	MovementSystem m_movementSystem;
+	CollisionSystem m_collisionSystem;
 	InputSystem m_inputSystem;
 	uint64_t m_frameLast = 0;
 };

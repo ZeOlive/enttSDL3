@@ -25,6 +25,7 @@ add_executable(mygame
     src/ecs/systems/RenderSystem.cpp
     src/ecs/systems/MovementSystem.cpp
     src/ecs/systems/InputSystem.cpp
+    src/ecs/systems/CollisionSystem.cpp
     src/ecs/EntityFactory.cpp
 )
 

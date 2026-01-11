@@ -11,7 +11,7 @@ bool InputSystem::update(entt::registry& registry, const InputState& inputState)
 
         if (inputState.up)
             vel.y -= 300.0f;
-        if (inputState.down) 
+        if (inputState.down)
             vel.y += 300.0f;
     }
 

@@ -26,7 +26,6 @@ struct RenderRect {
 };
 
 //Tags
-struct TagPaddle {};
 struct TagBall {};
 struct TagPlayer {};
 struct TagAI {};

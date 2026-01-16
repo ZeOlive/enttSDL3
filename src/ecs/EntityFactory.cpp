@@ -7,6 +7,7 @@ entt::entity EntityFactory::createPaddleLeft() {
     m_registry.emplace<Velocity>(player, 0.f, 0.f);
     m_registry.emplace<TagPlayer>(player);
     m_registry.emplace<TagPaddle>(player);
+    m_registry.emplace<TagLeftPaddle>(player);
 
     return player;
 }
@@ -18,6 +19,7 @@ entt::entity EntityFactory::createPaddleRight() {
     m_registry.emplace<Velocity>(ai, 0.f, 0.f);
     m_registry.emplace<TagAI>(ai);
     m_registry.emplace<TagPaddle>(ai);
+    m_registry.emplace<TagRightPaddle>(ai);
 
     return ai;
 }

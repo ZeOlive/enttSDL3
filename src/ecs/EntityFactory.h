@@ -12,4 +12,10 @@ public:
 
     private:
         entt::registry& m_registry;
+        constexpr static float paddleWidth = 20.f;
+        constexpr static float paddleHeight = 100.f;
+        constexpr static float ballSize = 16.f;
+        constexpr static SDL_FPoint ballStartPos = {400.f, 300.f};
+        constexpr static SDL_FPoint paddleLeftPos = {50.f, 250.f};
+        constexpr static SDL_FPoint paddleRightPos = {750.f, 250.f};
 };

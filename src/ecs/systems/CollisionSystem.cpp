@@ -39,15 +39,16 @@ void CollisionSystem::ballCollision(entt::registry& registry) {
 void CollisionSystem::ballPaddleCollision(entt::registry& registry, RenderRect& ballRect, Velocity& ballVel) {
         // Check collision for ball in the left collision zone
         if (ballVel.x < 0) {
-            auto paddleLeftView = registry.view<TagLeftPaddle, RenderRect>();
+            auto paddleLeftView = registry.view<TagLeftPaddle, RenderRect, Velocity>();
             
             for (auto paddleEntity : paddleLeftView) {
                 auto& paddleLeftRect = paddleLeftView.get<RenderRect>(paddleEntity);
+                auto& paddleLeftVel = paddleLeftView.get<Velocity>(paddleEntity);
 
                 if ((intersects(ballRect.rect, paddleLeftRect.rect))) {
                     // Pushball out
                     ballRect.rect.x = paddleLeftRect.rect.x + ballRect.rect.w;
-                    bounceBall(ballVel, ballRect.rect, paddleLeftRect.rect);
+                    bounceBall(ballVel, ballRect.rect, paddleLeftRect.rect, paddleLeftVel);
                     ballVel.x = std::abs(ballVel.x);
                     break;
                 }
@@ -55,14 +56,15 @@ void CollisionSystem::ballPaddleCollision(entt::registry& registry, RenderRect& 
         }
         // Check collision for ball in the right collision zone
         else {
-            auto paddleRightView = registry.view<TagRightPaddle, RenderRect>();
-            
+            auto paddleRightView = registry.view<TagRightPaddle, RenderRect, Velocity>();
+
             for (auto paddleEntity : paddleRightView) {
                 auto& paddleRightRect = paddleRightView.get<RenderRect>(paddleEntity);
+                auto& paddleRightVel = paddleRightView.get<Velocity>(paddleEntity);
 
                 if ((intersects(ballRect.rect, paddleRightRect.rect))) {
                     ballRect.rect.x = paddleRightRect.rect.x - ballRect.rect.w;
-                    bounceBall(ballVel, ballRect.rect, paddleRightRect.rect);
+                    bounceBall(ballVel, ballRect.rect, paddleRightRect.rect, paddleRightVel);
                     ballVel.x = -std::abs(ballVel.x);
                     break;
                 }
@@ -78,7 +80,7 @@ bool CollisionSystem::intersects(const SDL_FRect& a, const SDL_FRect& b)
              b.y + b.h <= a.y);
 }
 
-void CollisionSystem::bounceBall(Velocity& ballVel, const SDL_FRect& ballRect, const SDL_FRect& paddleRect) {
+void CollisionSystem::bounceBall(Velocity& ballVel, const SDL_FRect& ballRect, const SDL_FRect& paddleRect, const Velocity& paddleVel) {
     float ballCenterY =  ballRect.y + ballRect.h * 0.5f;
     float paddleCenterY = paddleRect.y + paddleRect.h * 0.5f;
     float relativeY = (ballCenterY - paddleCenterY) / (paddleRect.h * 0.5f);
@@ -91,6 +93,10 @@ void CollisionSystem::bounceBall(Velocity& ballVel, const SDL_FRect& ballRect, c
     float speed = std::sqrt(ballVel.x * ballVel.x + ballVel.y * ballVel.y);
     ballVel.x = speed * std::cos(bounceAngle);
     ballVel.y = speed * std::sin(bounceAngle);
+
+    // Spin effect
+    ballVel.y += paddleVel.y * SPIN_FACTOR;
+    ballVel.y = std::clamp(ballVel.y, -MAX_Y_SPEED, MAX_Y_SPEED);
 }
 
 void CollisionSystem::ballWallCollision(RenderRect& ballRect, Velocity& ballVel){

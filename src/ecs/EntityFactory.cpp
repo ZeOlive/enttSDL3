@@ -33,3 +33,11 @@ entt::entity EntityFactory::createBall() {
 
     return ball;
 }
+
+entt::entity EntityFactory::createScoreBoard() {
+    auto score = m_registry.create();
+    m_registry.emplace<Score>(score, 0, 0);
+    m_registry.emplace<Color>(score, SDL_Color{255,255,255,255});
+
+    return score;
+}

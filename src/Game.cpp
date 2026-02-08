@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "ecs/Components.h"
 #include "ecs/EntityFactory.h"
+#include <SDL3_ttf/SDL_ttf.h>
 
 // This function iterates through a frame of the game loop.
 SDL_AppResult Game::iterate(){
@@ -63,7 +64,12 @@ SDL_AppResult Game::init(){
 
     // Initialize the necessary subsystems of SDL (video and joystick)
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)) {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (TTF_Init() != 0) {
+        SDL_Log("TTF_Init failed: %s", TTF_GetError());
         return SDL_APP_FAILURE;
     }
 
@@ -72,6 +78,7 @@ SDL_AppResult Game::init(){
     factory.createBall();
     factory.createPaddleLeft();
     factory.createPaddleRight();
+    factory.createScoreBoard();
 
     m_frameLast = SDL_GetTicks();
 
@@ -84,6 +91,7 @@ bool Game::update(float dt)
     m_inputSystem.update(m_registry, m_inputState);
     m_movementSystem.update(m_registry, dt);
     m_collisionSystem.update(m_registry);
+    m_gameRulesSystem.update(m_registry);
 
     return true;
 }

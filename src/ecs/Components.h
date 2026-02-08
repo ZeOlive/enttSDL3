@@ -22,6 +22,15 @@ struct Ball {
     float radius{};
 };
 
+struct Score {
+    int left{};
+    int right{};
+};
+
+struct Goal{
+    bool leftSide{};
+};
+
 //Tags
 struct TagBall {};
 struct TagPaddle {};

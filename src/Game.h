@@ -8,6 +8,7 @@
 #include "ecs/systems/MovementSystem.h"
 #include "ecs/systems/InputSystem.h"
 #include "ecs/systems/CollisionSystem.h"
+#include "ecs/systems/GameRulesSystem.h"
 
 #define SDL_WINDOW_WIDTH 800
 #define SDL_WINDOW_HEIGHT 600
@@ -17,6 +18,10 @@
 class Game{
 public:
     explicit Game(SDL_Renderer& renderer) : m_renderSystem(renderer) {};
+	~Game() {
+		TTF_Quit();
+		SDL_Quit();
+	}
 
 	SDL_AppResult init();
 	SDL_AppResult iterate();
@@ -29,6 +34,7 @@ private:
     RenderSystem m_renderSystem;
 	MovementSystem m_movementSystem;
 	CollisionSystem m_collisionSystem;
+	GameRulesSystem m_gameRulesSystem;
 	InputSystem m_inputSystem;
 	uint64_t m_frameLast = 0;
 };

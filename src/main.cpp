@@ -54,6 +54,6 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result){
 
     SDL_DestroyRenderer(state->renderer);
     SDL_DestroyWindow(state->window);
-
+    
     delete state;
 }

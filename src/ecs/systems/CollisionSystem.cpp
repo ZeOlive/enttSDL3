@@ -31,7 +31,7 @@ void CollisionSystem::ballCollision(entt::registry& registry) {
         auto& ballRect = ballsView.get<RenderRect>(ballEntity);
 
         ballPaddleCollision(registry, ballRect, ballVel);
-        ballWallCollision(ballRect, ballVel);
+        ballWallCollision(registry, ballEntity, ballRect, ballVel);
 
     }
 }
@@ -99,7 +99,7 @@ void CollisionSystem::bounceBall(Velocity& ballVel, const SDL_FRect& ballRect, c
     ballVel.y = std::clamp(ballVel.y, -MAX_Y_SPEED, MAX_Y_SPEED);
 }
 
-void CollisionSystem::ballWallCollision(RenderRect& ballRect, Velocity& ballVel){
+void CollisionSystem::ballWallCollision(entt::registry& registry, entt::entity& ball, RenderRect& ballRect, Velocity& ballVel){
     
     if (ballRect.rect.y <= TOP_BOUND) {
         ballRect.rect.y = TOP_BOUND;
@@ -110,16 +110,9 @@ void CollisionSystem::ballWallCollision(RenderRect& ballRect, Velocity& ballVel)
         ballVel.y = -ballVel.y;
     }
     else if (ballRect.rect.x <= LEFT_BOUND) {
-        collisionReset(ballRect, ballVel);
+        registry.emplace<Goal>(ball, true);
     }
     else if (ballRect.rect.x + ballRect.rect.w >= RIGHT_BOUND) {
-        collisionReset(ballRect, ballVel);
+        registry.emplace<Goal>(ball, false);
     }
-}
-
-void CollisionSystem::collisionReset(RenderRect& ballRect, Velocity& ballVel) {
-    ballRect.rect.x = 400.f;
-    ballRect.rect.y = 300.f;
-    ballVel.x = -300.f;
-    ballVel.y = -300.f;
 }

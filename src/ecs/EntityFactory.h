@@ -9,6 +9,7 @@ public:
     entt::entity createPaddleLeft();
     entt::entity createPaddleRight();
     entt::entity createBall();
+    entt::entity createScoreBoard();
 
     private:
         entt::registry& m_registry;

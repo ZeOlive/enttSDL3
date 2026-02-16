@@ -7,6 +7,7 @@ project(mygame LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(SDLTTF_VENDORED ON)
 
 # ---------------------------------------------
 # SDL and EnTT (vendored)
@@ -15,6 +16,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # SDL_INSTALL, SDL_TESTS and other flags are controlled by CMakePresets.
 add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendored/entt EXCLUDE_FROM_ALL)
+add_subdirectory(vendored/SDL_ttf EXCLUDE_FROM_ALL)
 
 # ---------------------------------------------
 # Executable
@@ -33,6 +35,7 @@ add_executable(mygame
 target_link_libraries(mygame
     PRIVATE
         SDL3::SDL3
+        SDL3_ttf::SDL3_ttf
         EnTT::EnTT
 )
 
@@ -49,8 +52,13 @@ if (WIN32 AND SDL_SHARED)
         TARGET mygame POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE:SDL3_ttf::SDL3_ttf>
             $<TARGET_FILE_DIR:mygame>
     )
+
+    #set_target_properties(mygame PROPERTIES
+    #WIN32_EXECUTABLE TRUE
+#)
 endif()
 
 # ---------------------------------------------

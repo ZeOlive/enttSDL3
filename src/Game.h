@@ -1,6 +1,5 @@
 #pragma once
 
-#define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <entt/entt.hpp>
 #include "InputState.h"
@@ -17,18 +16,17 @@
 
 class Game{
 public:
-    explicit Game(SDL_Renderer& renderer) : m_renderSystem(renderer) {};
-	~Game() {
-		TTF_Quit();
-		SDL_Quit();
-	}
+    explicit Game(SDL_Renderer* renderer)
+        : m_renderSystem(renderer)
+    {}
 
-	SDL_AppResult init();
+	bool init();
 	SDL_AppResult iterate();
 	SDL_AppResult handleEvents(SDL_Event* event);
-	bool update(float dt);
 	
 private:
+	bool update(float dt);
+
     entt::registry m_registry;
 	InputState m_inputState;
     RenderSystem m_renderSystem;

@@ -19,7 +19,9 @@
         "SDL_STATIC": "OFF",
         "SDL_INSTALL": "OFF",
         "SDL_TESTS": "OFF",
-        "MYGAME_VENDORED": "ON"
+        "MYGAME_VENDORED": "ON",
+        "SDLTTF_VENDORED": "ON",
+        "SDLTTF_FREETYPE_VENDORED": "ON"
       }
     },
 

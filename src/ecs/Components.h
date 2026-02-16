@@ -5,6 +5,10 @@ struct RenderRect {
     SDL_FRect rect{};
 };
 
+struct Texture {
+    SDL_Texture* texture;
+};
+
 struct Velocity {
     float x{};
     float y{};
@@ -22,9 +26,9 @@ struct Ball {
     float radius{};
 };
 
-struct Score {
-    int left{};
-    int right{};
+struct ScoreNumber {
+    unsigned int value{};
+    bool isLeft{};
 };
 
 struct Goal{
@@ -34,7 +38,7 @@ struct Goal{
 //Tags
 struct TagBall {};
 struct TagPaddle {};
-struct TagLeftPaddle {}; // Player 1
-struct TagRightPaddle {}; // Player 2
+struct TagRight {};
+struct TagLeft {};
 struct TagPlayer {};
 struct TagAI {};

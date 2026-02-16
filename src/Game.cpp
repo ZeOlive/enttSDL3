@@ -1,7 +1,6 @@
 #include "Game.h"
-#include "ecs/Components.h"
+//#include "ecs/Components.h"
 #include "ecs/EntityFactory.h"
-#include <SDL3_ttf/SDL_ttf.h>
 
 // This function iterates through a frame of the game loop.
 SDL_AppResult Game::iterate(){
@@ -56,22 +55,7 @@ SDL_AppResult Game::handleEvents(SDL_Event* event)
 }
 
 // This function initializes the game, sets up metadata, initializes SDL,
-SDL_AppResult Game::init(){
-    // Set application metadata
-    if (!SDL_SetAppMetadata("Test Pong", "1.0", "com.example.Pong")) {
-        return SDL_APP_FAILURE;
-    }
-
-    // Initialize the necessary subsystems of SDL (video and joystick)
-    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)) {
-        SDL_Log("SDL_Init failed: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
-    }
-
-    if (TTF_Init() != 0) {
-        SDL_Log("TTF_Init failed: %s", TTF_GetError());
-        return SDL_APP_FAILURE;
-    }
+bool Game::init(){
 
     EntityFactory factory(m_registry);
 
@@ -80,12 +64,13 @@ SDL_AppResult Game::init(){
     factory.createPaddleRight();
     factory.createScoreBoard();
 
+    m_renderSystem.init(m_registry);
+
     m_frameLast = SDL_GetTicks();
 
-    return SDL_APP_CONTINUE; // Successful initialization
+    return true; // Successful initialization
 }
 
-// This function updates the game state. Currently, it does nothing and always returns true.
 bool Game::update(float dt)
 {
     m_inputSystem.update(m_registry, m_inputState);

@@ -39,7 +39,7 @@ void CollisionSystem::ballCollision(entt::registry& registry) {
 void CollisionSystem::ballPaddleCollision(entt::registry& registry, RenderRect& ballRect, Velocity& ballVel) {
         // Check collision for ball in the left collision zone
         if (ballVel.x < 0) {
-            auto paddleLeftView = registry.view<TagLeftPaddle, RenderRect, Velocity>();
+            auto paddleLeftView = registry.view<TagLeft, RenderRect, Velocity>();
             
             for (auto paddleEntity : paddleLeftView) {
                 auto& paddleLeftRect = paddleLeftView.get<RenderRect>(paddleEntity);
@@ -56,7 +56,7 @@ void CollisionSystem::ballPaddleCollision(entt::registry& registry, RenderRect& 
         }
         // Check collision for ball in the right collision zone
         else {
-            auto paddleRightView = registry.view<TagRightPaddle, RenderRect, Velocity>();
+            auto paddleRightView = registry.view<TagRight, RenderRect, Velocity>();
 
             for (auto paddleEntity : paddleRightView) {
                 auto& paddleRightRect = paddleRightView.get<RenderRect>(paddleEntity);

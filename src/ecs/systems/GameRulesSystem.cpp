@@ -4,9 +4,13 @@
 void GameRulesSystem::update(entt::registry& registry) {
 
     auto goalView = registry.view<Goal>();
-    auto scoreView = registry.view<Score>();
-    auto& scoreEntity = *scoreView.begin();
-    auto& score = scoreView.get<Score>(scoreEntity);
+    auto scoreLeftView = registry.view<TagLeft, ScoreNumber>();
+    auto& scoreLeftEntity = *scoreLeftView.begin();
+    auto& scoreLeft = scoreLeftView.get<ScoreNumber>(scoreLeftEntity);
+
+    auto scoreRightView = registry.view<TagRight, ScoreNumber>();
+    auto& scoreRightEntity = *scoreRightView.begin();
+    auto& scoreRight = scoreRightView.get<ScoreNumber>(scoreRightEntity);
 
     constexpr float LEFT_GOAL  = 0.0f;
     constexpr float RIGHT_GOAL = 800.0f;
@@ -15,22 +19,22 @@ void GameRulesSystem::update(entt::registry& registry) {
         auto& goal = goalView.get<Goal>(goalEntity);
 
         if (goal.leftSide) {
-            score.right++;
-            if (!renderSystem.updateScoreTexture(score.right, false)) {
-                SDL_Log("Failed to update right score texture");
-            }
+            scoreRight.value++;
             resetBall(registry, false);
-            registry.remove<Goal>(goalEntity);
         }
         else {
-            score.left++;
-            if (!renderSystem.updateScoreTexture(score.left, true)) {
-                SDL_Log("Failed to update left score texture");
-            }
+            scoreLeft.value++;
             resetBall(registry, true);
-            registry.remove<Goal>(goalEntity);
         } 
-    }    
+    }
+
+    if (scoreLeft.value > 9) {
+        SDL_Log("Right Player Wins!");
+        registry.clear();
+    }
+    else if (scoreRight.value > 9) {
+        SDL_Log("Left Player Wins!");
+        registry.clear();
 }
 
 void GameRulesSystem::resetBall(entt::registry& registry, bool leftPoint) {

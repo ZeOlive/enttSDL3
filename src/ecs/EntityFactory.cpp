@@ -7,7 +7,7 @@ entt::entity EntityFactory::createPaddleLeft() {
     m_registry.emplace<Velocity>(player, 0.f, 0.f);
     m_registry.emplace<TagPlayer>(player);
     m_registry.emplace<TagPaddle>(player);
-    m_registry.emplace<TagLeftPaddle>(player);
+    m_registry.emplace<TagLeft>(player);
 
     return player;
 }
@@ -19,7 +19,7 @@ entt::entity EntityFactory::createPaddleRight() {
     m_registry.emplace<Velocity>(ai, 0.f, 0.f);
     m_registry.emplace<TagAI>(ai);
     m_registry.emplace<TagPaddle>(ai);
-    m_registry.emplace<TagRightPaddle>(ai);
+    m_registry.emplace<TagRight>(ai);
 
     return ai;
 }
@@ -35,9 +35,20 @@ entt::entity EntityFactory::createBall() {
 }
 
 entt::entity EntityFactory::createScoreBoard() {
-    auto score = m_registry.create();
-    m_registry.emplace<Score>(score, 0, 0);
-    m_registry.emplace<Color>(score, SDL_Color{255,255,255,255});
+    
+    auto scoreLeft = m_registry.create();
+    m_registry.emplace<ScoreNumber>(scoreLeft, 0u, true);
+    m_registry.emplace<Color>(scoreLeft, SDL_Color{0,0,0,255});
+    m_registry.emplace<RenderRect>(scoreLeft, SDL_FRect{scoreLeftPos.x, scoreLeftPos.y, scoreSize, scoreSize});
+    m_registry.emplace<Texture>(scoreLeft, Texture{nullptr});
+    m_registry.emplace<TagLeft>(scoreLeft);
 
-    return score;
+    auto scoreRight = m_registry.create();
+    m_registry.emplace<ScoreNumber>(scoreRight, 0u, false);
+    m_registry.emplace<Color>(scoreRight, SDL_Color{0,0,0,255});
+    m_registry.emplace<RenderRect>(scoreRight, SDL_FRect{scoreRightPos.x, scoreRightPos.y, scoreSize, scoreSize});
+    m_registry.emplace<Texture>(scoreRight, Texture{nullptr});
+    m_registry.emplace<TagRight>(scoreRight);
+
+    return scoreLeft;
 }

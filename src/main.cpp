@@ -1,5 +1,9 @@
-#include "Game.h"
+#define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
+#include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
+#include "Game.h"
 
 struct AppState {
     SDL_Window* window;
@@ -9,11 +13,37 @@ struct AppState {
     AppState(SDL_Window* w, SDL_Renderer* r): 
         window(w),
         renderer(r),
-        game(*r)
+        game(r)
     {}
-};
+
+    ~AppState() {
+        if (renderer) {
+            SDL_DestroyRenderer(renderer);
+            renderer = nullptr;
+        }
+        if (window) {
+            SDL_DestroyWindow(window);
+            window = nullptr;
+        }
+    }
+}; 
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]){
+
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK)) {
+        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_SetAppMetadata("Test Pong", "1.0", "com.example.Pong")) {
+        return SDL_APP_FAILURE;
+    }    
+
+    if (!TTF_Init()) {
+        SDL_Log("TTF_Init failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
 	SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
@@ -23,20 +53,15 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]){
     }
 
     auto* state = new AppState(window, renderer);
-
-    if (state->game.init() != SDL_APP_CONTINUE) {
-        delete state;
-        return SDL_APP_FAILURE;
-	}
-
-    // Necessary to pass the created application state to SDL
+    state->game.init();
+    
      *appstate = state;
 
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppIterate(void* appstate){
-    auto* state = static_cast<AppState*>(appstate);
+    auto* state = static_cast<AppState*>(appstate); 
 
 	return state->game.iterate();
 
@@ -52,8 +77,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event){
 void SDL_AppQuit(void* appstate, SDL_AppResult result){
     auto* state = static_cast<AppState*>(appstate);
 
-    SDL_DestroyRenderer(state->renderer);
-    SDL_DestroyWindow(state->window);
-    
     delete state;
+
+	SDL_Quit();
 }
